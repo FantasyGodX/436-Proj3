@@ -3,9 +3,11 @@ import useFetch from './hooks/useFetch'
 import { categoriesUrl, mealsByCategoryUrl } from './api'
 import CategoryPicker from './components/CategoryPicker'
 import RecipeGrid from './components/RecipeGrid'
+import RecipeModal from './components/RecipeModal'
 
 export default function App() {
   const [pickedCategory, setPickedCategory] = useState(null)
+  const [openMealId, setOpenMealId] = useState(null)
 
   const categoriesRequest = useFetch(categoriesUrl(false))
   // Derived, not stored: the user's pick, else the first category once loaded
@@ -30,9 +32,11 @@ export default function App() {
         <>
           <h2 className="section-title">{category} recipes</h2>
           {/* key resets the search and filter whenever the category changes */}
-          <RecipeGrid key={category} request={mealsRequest} category={category} onOpen={() => {}} />
+          <RecipeGrid key={category} request={mealsRequest} category={category} onOpen={setOpenMealId} />
         </>
       )}
+
+      {openMealId && <RecipeModal mealId={openMealId} broken={false} onClose={() => setOpenMealId(null)} />}
     </div>
   )
 }
