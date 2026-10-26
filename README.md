@@ -2,7 +2,7 @@
 
 A React app for browsing recipes by category, with live search and a country filter. Built for CSC 436 Project 3 (Async React) to demonstrate the Three States Pattern: every fetch shows a loading state, an error state with retry, or data. It never shows a blank screen.
 
-**Live site:** https://YOUR-SITE-NAME.netlify.app  <!-- replace after deploying -->
+**Live site:** https://proj3-meals.netlify.app
 
 ## API
 
