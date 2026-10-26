@@ -1,16 +1,44 @@
-# React + Vite
+# The Recipe Tavern
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A React app for browsing recipes by category, with live search and a country filter. Built for CSC 436 Project 3 (Async React) to demonstrate the Three States Pattern: every fetch shows a loading state, an error state with retry, or data. It never shows a blank screen.
 
-Currently, two official plugins are available:
+**Live site:** https://YOUR-SITE-NAME.netlify.app  <!-- replace after deploying -->
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## API
 
-## React Compiler
+[TheMealDB](https://www.themealdb.com/api.php), a free public API that needs no key or OAuth. The app uses three endpoints:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Endpoint | Used for |
+|---|---|
+| `categories.php` | the category chips |
+| `filter.php?c=<category>` | the recipe grid for the selected category |
+| `lookup.php?i=<id>` | the full recipe in the detail modal |
 
-## Expanding the Oxlint configuration
+## Run locally
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # production build into dist/
+npm run lint
+```
+
+## How to see the error state
+
+Either:
+
+- tick **Simulate network failure** in the page header, or
+- open the site with `?broken` on the end of the URL (for example `/?broken`).
+
+Both point every request at an unreachable host, so each fetch fails like a dropped connection. Each error box has a **Try again** button. Unticking the box recovers on its own. Real failures are handled too: going offline gives an "offline" message, and HTTP errors such as a 500 are reported with their status code.
+
+## How it works
+
+- `src/hooks/useFetch.js`: custom hook, `useFetch(url)` returns `{ data, loading, error, refetch }`. The effect depends only on primitives (`url` and a retry counter), so it can't loop, and it aborts in-flight requests on cleanup.
+- `src/components/AsyncView.jsx`: renders exactly one of loading, error, or data. All three fetches go through it.
+- `src/components/CategoryPicker.jsx`, `RecipeGrid.jsx`, `RecipeModal.jsx`: the three fetches, each with its own skeleton.
+- Search and country filtering run client-side over the already-fetched list, so typing never triggers a request.
+
+## Deploy
+
+Netlify builds with `npm run build` and publishes `dist` (see `netlify.toml`).
